@@ -1,12 +1,12 @@
 const db = require('../config/db');
 
 exports.createClient = async (req, res, next) => {
-  const { user_id, address, name, phone, assigned_seller } = req.body;
+  const { address, name, phone, assigned_seller } = req.body;
 
   try {
     const [result] = await db.execute(
-      'INSERT INTO client (user_id, address, name, phone, assigned_seller) VALUES (?, ?, ?, ?, ?)',
-      [user_id, address, name, phone, assigned_seller]
+      'INSERT INTO client (address, name, phone, assigned_seller) VALUES (?, ?, ?, ?, ?)',
+      [address, name, phone, assigned_seller]
     );
 
     res.status(201).json({
