@@ -5,7 +5,7 @@ exports.createClient = async (req, res, next) => {
 
   try {
     const [result] = await db.execute(
-      'INSERT INTO client (address, name, phone, assigned_seller) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO client (address, name, phone, assigned_seller) VALUES (?, ?, ?, ?)',
       [address, name, phone, assigned_seller]
     );
 
