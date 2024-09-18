@@ -9,7 +9,7 @@ const morgan = require('morgan');
 app.use(express.json());
 app.use(cors());
 
-app.use('/api', authRoutes);
+app.use('/auth', authRoutes);
 
 app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ message: err.message });
