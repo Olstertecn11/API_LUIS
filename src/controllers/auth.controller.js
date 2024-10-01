@@ -7,7 +7,10 @@ function generateToken() {
 }
 
 exports.login = async (req, res, next) => {
+  console.log('login')
   const { username, password } = req.body;
+  console.log('consulta');
+  console.log(username);
 
   try {
     const [user] = await db.execute('SELECT * FROM user WHERE username = ? AND password = ?', [username, password]);
@@ -18,7 +21,7 @@ exports.login = async (req, res, next) => {
 
     const sessionToken = generateToken();
 
-    const expiresAt = new Date(Date.now() + 3600000); // 1 hour
+    const expiresAt = new Date(Date.now() + 3600000);
 
     await db.execute('INSERT INTO access_token (user_id, token, expires_at) VALUES (?, ?, ?)', [
       user[0].id,
