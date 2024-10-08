@@ -59,24 +59,11 @@ exports.getUserById = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   const { id } = req.params;
-  const { username, password, role_id, email, image, type } = req.body;
+  const { username, role_id, email, image } = req.body;
 
   try {
-    let query = '';
-    let values = [];
-
-    if (type === 'updatePassword') {
-      query = 'UPDATE user SET password = ? WHERE id = ?';
-      values = [password, id];
-    } else if (type === 'updateImage') {
-      query = 'UPDATE user SET image = ? WHERE id = ?';
-      values = [image, id];
-    } else if (type === 'updateInfo') {
-      query = 'UPDATE user SET username = ?, role_id = ?, email = ?, image = ? WHERE id = ?';
-      values = [username, role_id, email, image, id];
-    } else {
-      return res.status(400).json({ message: 'Invalid update type' });
-    }
+    const query = 'UPDATE user SET username = ?, role_id = ?, email = ?, image = ? WHERE id = ?';
+    const values = [username, role_id, email, image, id];
 
     const [result] = await db.execute(query, values);
 
@@ -114,3 +101,35 @@ exports.deleteUser = async (req, res, next) => {
   }
 };
 
+
+
+exports.updatePassword = async (req, res, next) => {
+  const { id } = req.params;
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    const [user] = await db.execute('SELECT password FROM user WHERE id = ?', [id]);
+
+    if (user.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user[0].password !== currentPassword) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    const [result] = await db.execute('UPDATE user SET password = ? WHERE id = ?', [newPassword, id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Error updating password' });
+    }
+
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Error updating password',
+      error: err.message
+    });
+  }
+};
