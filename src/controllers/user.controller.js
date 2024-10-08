@@ -59,13 +59,26 @@ exports.getUserById = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   const { id } = req.params;
-  const { username, password, role_id, email } = req.body;
+  const { username, password, role_id, email, image, type } = req.body;
 
   try {
-    const [result] = await db.execute(
-      'UPDATE user SET username = ?, password = ?, role_id = ?, email = ? WHERE id = ?',
-      [username, password, role_id, email, id]
-    );
+    let query = '';
+    let values = [];
+
+    if (type === 'updatePassword') {
+      query = 'UPDATE user SET password = ? WHERE id = ?';
+      values = [password, id];
+    } else if (type === 'updateImage') {
+      query = 'UPDATE user SET image = ? WHERE id = ?';
+      values = [image, id];
+    } else if (type === 'updateInfo') {
+      query = 'UPDATE user SET username = ?, role_id = ?, email = ?, image = ? WHERE id = ?';
+      values = [username, role_id, email, image, id];
+    } else {
+      return res.status(400).json({ message: 'Invalid update type' });
+    }
+
+    const [result] = await db.execute(query, values);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'User not found' });
