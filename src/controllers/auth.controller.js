@@ -55,3 +55,39 @@ exports.logout = async (req, res, next) => {
   }
 };
 
+
+exports.me = async (req, res, next) => {
+  const { token } = req.body;
+
+  try {
+    const [session] = await db.execute('SELECT * FROM access_token WHERE token = ?', [token]);
+
+    if (session.length === 0) {
+      return res.status(401).json({ error: 'Token inválido o expirado' });
+    }
+
+    const userId = session[0].user_id;
+
+    const [user] = await db.execute('SELECT * FROM user WHERE id = ?', [userId]);
+
+    if (user.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    res.json({
+      user: {
+        id: user[0].id,
+        username: user[0].username,
+        email: user[0].email,
+        role_id: user[0].role_id,
+        image: user[0].image,
+        created_at: user[0].created_at,
+      },
+      token: token,
+      expiresAt: session[0].expires_at
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
