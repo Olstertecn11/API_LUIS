@@ -5,6 +5,7 @@ const authRoutes = require('./routes/auth.routes');
 const clientRoutes = require('./routes/client.routes');
 const userRoutes = require('./routes/user.routes');
 const productRoutes = require('./routes/product.routes');
+const orderRoutes = require('./routes/order.routes');
 const morgan = require('morgan');
 
 
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use('/auth', authRoutes);
 app.use('/client', clientRoutes);
 app.use('/user', userRoutes);
+app.use('', orderRoutes);
 app.use('', productRoutes);
 
 app.use((err, req, res, next) => {
