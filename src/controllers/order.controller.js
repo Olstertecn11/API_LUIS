@@ -8,7 +8,7 @@ exports.createOrder = async (req, res, next) => {
     const [result] = await db.execute('INSERT INTO `order` (client_id, total, status) VALUES (?, ?, ?)', [
       client_id,
       total,
-      'pending',
+      'proceso',
     ]);
 
     const orderId = result.insertId;
