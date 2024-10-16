@@ -29,7 +29,7 @@ exports.createOrder = async (req, res, next) => {
 exports.getOrders = async (req, res, next) => {
   try {
     const [orders] = await db.execute(`
-      SELECT o.id, o.client_id, o.order_date, o.status, o.total, c.name as client_name 
+      SELECT o.id, o.client_id, o.order_date, o.status, o.total, c.name as client_name, c.address, c.phone, c.assigned_seller
       FROM \`order\` o
       JOIN client c ON o.client_id = c.id
       ORDER BY o.order_date DESC
