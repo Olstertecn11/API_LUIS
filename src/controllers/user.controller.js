@@ -59,11 +59,11 @@ exports.getUserById = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   const { id } = req.params;
-  const { username, role_id, email, image } = req.body;
+  const { username, role_id, email } = req.body;
 
   try {
-    const query = 'UPDATE user SET username = ?, role_id = ?, email = ?, image = ? WHERE id = ?';
-    const values = [username, role_id, email, image, id];
+    const query = 'UPDATE user SET username = ?, role_id = ?, email = ? WHERE id = ?';
+    const values = [username, role_id, email, id];
 
     const [result] = await db.execute(query, values);
 
