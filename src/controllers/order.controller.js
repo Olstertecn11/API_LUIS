@@ -1,6 +1,7 @@
 
 const db = require('../config/db');
 
+
 exports.createOrder = async (req, res, next) => {
   const { client_id, items, total } = req.body;
 
@@ -20,11 +21,16 @@ exports.createOrder = async (req, res, next) => {
       [orderItems]
     );
 
+    for (const item of items) {
+      await db.query('CALL decrease_inventory(?, ?)', [item.product_id, item.quantity]);
+    }
+
     res.status(201).json({ message: 'Pedido creado con éxito', orderId });
   } catch (err) {
     next(err);
   }
 };
+
 
 exports.getOrders = async (req, res, next) => {
   try {
