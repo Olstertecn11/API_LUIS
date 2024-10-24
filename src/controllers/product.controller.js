@@ -107,11 +107,12 @@ exports.getStats = async (req, res, next) => {
     const [gananciasResult] = await db.query('CALL getMensualGain()');
     const [topPlantasResult] = await db.query('CALL getTopPlants()');
     const [getMensualOrders] = await db.query('CALL getMensualOrders()');
+    console.log(gananciasResult);
 
     res.json({
-      ganancias: gananciasResult[0].total_ganancias, // Ganancias del mes
-      topPlantas: topPlantasResult,
-      mensualOrders: getMensualOrders[0].total_orders
+      ganancias: gananciasResult[0],
+      topPlantas: topPlantasResult[0],
+      mensualOrders: getMensualOrders[0]
     });
   } catch (err) {
     console.error(err);
