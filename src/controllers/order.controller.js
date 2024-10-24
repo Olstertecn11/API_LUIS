@@ -3,13 +3,14 @@ const db = require('../config/db');
 
 
 exports.createOrder = async (req, res, next) => {
-  const { client_id, items, total } = req.body;
+  const { client_id, items, total, direction } = req.body;
 
   try {
-    const [result] = await db.execute('INSERT INTO `order` (client_id, total, status) VALUES (?, ?, ?)', [
+    const [result] = await db.execute('INSERT INTO `order` (client_id, total, status, direction) VALUES (?, ?, ?, ?)', [
       client_id,
       total,
       'proceso',
+      direction
     ]);
 
     const orderId = result.insertId;
@@ -35,7 +36,7 @@ exports.createOrder = async (req, res, next) => {
 exports.getOrders = async (req, res, next) => {
   try {
     const [orders] = await db.execute(`
-      SELECT o.id, o.client_id, o.order_date, o.status, o.total, c.name as client_name, c.address, c.phone, c.assigned_seller
+      SELECT o.id, o.client_id, o.order_date, o.status, o.total, o.direction, c.name as client_name, c.address, c.phone, c.assigned_seller
       FROM \`order\` o
       JOIN client c ON o.client_id = c.id
       ORDER BY o.order_date DESC
