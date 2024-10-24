@@ -99,3 +99,28 @@ exports.deleteProduct = async (req, res, next) => {
     });
   }
 };
+
+
+
+exports.getStats = async (req, res, next) => {
+  try {
+    const [gananciasResult] = await db.query('CALL getMensualGain()');
+    const [topPlantasResult] = await db.query('CALL getTopPlants()');
+    const [getMensualOrders] = await db.query('CALL getMensualOrders()');
+
+    res.json({
+      ganancias: gananciasResult[0].total_ganancias, // Ganancias del mes
+      topPlantas: topPlantasResult,
+      mensualOrders: getMensualOrders[0].total_orders
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Error getting stats',
+      error: err.message
+    });
+  }
+
+}
+
+
