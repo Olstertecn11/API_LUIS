@@ -102,17 +102,19 @@ exports.deleteProduct = async (req, res, next) => {
 
 
 
+
 exports.getStats = async (req, res, next) => {
   try {
-    const [gananciasResult] = await db.query('CALL getMensualGain()');
+    const fecha = req.query.fecha || new Date().toISOString().slice(0, 7);
+
+    const [[gananciasResult]] = await db.query('CALL getMensualGain(?)', [fecha]);
+    const [[mensualOrdersResult]] = await db.query('CALL getMensualOrders(?)', [fecha]);
     const [topPlantasResult] = await db.query('CALL getTopPlants()');
-    const [getMensualOrders] = await db.query('CALL getMensualOrders()');
-    console.log(gananciasResult);
 
     res.json({
-      ganancias: gananciasResult[0],
-      topPlantas: topPlantasResult[0],
-      mensualOrders: getMensualOrders[0]
+      ganancias: gananciasResult || {},
+      topPlantas: topPlantasResult || [],
+      mensualOrders: mensualOrdersResult || {}
     });
   } catch (err) {
     console.error(err);
@@ -121,7 +123,7 @@ exports.getStats = async (req, res, next) => {
       error: err.message
     });
   }
+};
 
-}
 
 
